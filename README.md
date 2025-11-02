@@ -7,6 +7,7 @@ Ce projet est une application web de gestion des interventions multi-rôles (Ges
 L’application permet :  
 - Gestion d'interventions en fonction de l’utilisateurs qui a rôles spécifiques.  
 - Accès sécurisé aux dashboards selon le rôle grace à Clerk qui gerer l'authentification.  
+<<<<<<< HEAD
 - Gestion des données via **Prisma** et **MySQL**.
 - UI responsive et professionnelle avec **Tailwind CSS** et **Shadcn/UI**
 
@@ -22,6 +23,10 @@ L’application permet :
 - Dashboards distincts selon les rôles  
 - Gestion de la base de données avec **Prisma**  
 - UI responsive et professionnelle avec **Tailwind CSS** et **Shadcn/UI**
+=======
+- Gestion des données via Prisma et MySQL/PostgreSQL.
+- UI responsive et profestionnelle avec **Tailwind css** et **Shadcn/UI**
+>>>>>>> 49c9c9f53923a45efb9a46b357831ca53b8ae0ec
 
 ---
 
@@ -48,9 +53,30 @@ L’application permet :
 - **Icones** : Lucide-react  
 - **Outils** : ESLint, Prettier  
 
+![Next.js](https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3-blue?style=flat-square&logo=tailwind-css)
+![Clerk](https://img.shields.io/badge/Clerk-Auth-green?style=flat-square)
+![Prisma](https://img.shields.io/badge/Prisma-ORM-blue?style=flat-square&logo=prisma)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)
 ---
 
+<<<<<<< HEAD
 ## ⚡ Installation
+=======
+## 📸 Aperçu
+
+![Page d'accueil](./public/screenshots/home.png)  
+*Page d'accueil moderne et responsive*  
+
+![Dashboard Gestionnaire](./public/screenshots/dashboard-gestionnaire.png)  
+*Dashboard du gestionnaire avec création et gestion des techniciens*
+
+![Dashboard Technicien](./public/screenshots/dashboard-technicien.png)  
+*Dashboard du technicien pour suivi des tâches et interventions*
+
+
+## Installation
+>>>>>>> 49c9c9f53923a45efb9a46b357831ca53b8ae0ec
 
 ```sh
 1. Cloner le dépôt :  
