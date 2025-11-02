@@ -1,0 +1,205 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+//////////////////////////////////////
+//            ENUMS
+//////////////////////////////////////
+
+enum Role {
+  ADMIN
+  GESTIONNAIRE
+  TECHNICIEN
+}
+
+enum StatutIntervention {
+  ASSIGNE
+  EN_COURS
+  TERMINE
+  ANNULE
+}
+
+enum TypeContrat {
+  MENSUEL
+  TRIMESTRIEL
+  SEMESTRIEL
+  ANNUEL
+}
+
+//////////////////////////////////////
+//            MODELS
+//////////////////////////////////////
+
+// Utilisateurs (Clerk)
+model User {
+  id           String   @id @default(cuid())
+  clerkUserId  String   @unique               // liaison avec Clerk
+  matricule    String?  @unique
+  name         String?
+  email        String?
+  role         Role     @default(TECHNICIEN)
+  agenceId     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  agence       Agency?     @relation(fields: [agenceId], references: [id])
+  interventions Intervention[]
+  clients       Client[]    @relation("GestionnaireClients")
+
+  @@map("users")
+}
+
+//////////////////////////////////////
+//            AGENCE
+//////////////////////////////////////
+
+model Agency {
+  id          String  @id @default(cuid())
+  code        String  @unique
+  name        String
+  address     String?
+  phone       String?
+  email       String?
+  createdAt   DateTime @default(now())
+
+  // Relations
+  techniciens User[]
+  clients     Client[]
+  interventions Intervention[]
+
+  @@map("agences")
+}
+
+//////////////////////////////////////
+//            CLIENT
+//////////////////////////////////////
+
+model Client {
+  id             String   @id @default(cuid())
+  numClient      String   @unique
+  raisonSociale  String
+  adresse        String?
+  telephone      String?
+  email          String?
+  agenceId       String
+  gestionnaireId String?
+  createdAt      DateTime @default(now())
+
+  // Relations
+  agence         Agency    @relation(fields: [agenceId], references: [id])
+  gestionnaire   User?     @relation("GestionnaireClients", fields: [gestionnaireId], references: [id])
+  materiels      Materiel[]
+  contrats       Contract[]
+  interventions  Intervention[]
+
+  @@map("clients")
+}
+
+//////////////////////////////////////
+//            TYPE DE MATÉRIEL
+//////////////////////////////////////
+
+model TypeMateriel {
+  id       String   @id @default(cuid())
+  libelle  String   @unique
+  materiels Materiel[]
+
+  @@map("types_materiel")
+}
+
+//////////////////////////////////////
+//            MATERIEL
+//////////////////////////////////////
+
+model Materiel {
+  id            String   @id @default(cuid())
+  numSerie      String   @unique
+  marque        String
+  modele        String
+  dateInstallation DateTime?
+  clientId      String
+  typeId        String
+
+  // Relations
+  client Client @relation(fields: [clientId], references: [id])
+  type   TypeMateriel @relation(fields: [typeId], references: [id])
+  interventions Intervention[]
+
+  @@map("materiels")
+}
+
+//////////////////////////////////////
+//            CONTRAT
+//////////////////////////////////////
+
+model Contract {
+  id             String        @id @default(cuid())
+  numContrat     String        @unique
+  typeContrat    TypeContrat
+  dateDebut      DateTime
+  dateFin        DateTime
+  clientId       String
+  agenceId       String
+  montant        Float
+
+  // Relations
+  client Client @relation(fields: [clientId], references: [id])
+  agence Agency @relation(fields: [agenceId], references: [id])
+
+  @@map("contrats")
+}
+
+//////////////////////////////////////
+//            INTERVENTION
+//////////////////////////////////////
+
+model Intervention {
+  id             String              @id @default(cuid())
+  numFiche       String              @unique
+  datePrev       DateTime?
+  dateReal       DateTime?
+  statut         StatutIntervention  @default(ASSIGNE)
+  commentaire    String?
+  technicienId   String
+  clientId       String
+  agenceId       String
+  materielId     String?
+  createdAt      DateTime            @default(now())
+
+  // Relations
+  technicien User       @relation(fields: [technicienId], references: [id])
+  client     Client     @relation(fields: [clientId], references: [id])
+  agence     Agency     @relation(fields: [agenceId], references: [id])
+  materiel   Materiel?  @relation(fields: [materielId], references: [id])
+
+  @@map("interventions")
+}
+
+//////////////////////////////////////
+//            LOGS / HISTORIQUE
+//////////////////////////////////////
+
+model LogAction {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  createdAt DateTime @default(now())
+
+  // Relations
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("logs")
+}
